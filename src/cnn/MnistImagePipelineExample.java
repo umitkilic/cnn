@@ -8,9 +8,13 @@ package cnn;
 import java.io.File;
 import java.util.Random;
 import org.datavec.api.io.labels.ParentPathLabelGenerator;
+import org.datavec.api.records.listener.impl.LogRecordListener;
 import org.datavec.api.split.FileSplit;
 import org.datavec.image.loader.NativeImageLoader;
 import org.datavec.image.recordreader.ImageRecordReader;
+import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
+import org.nd4j.linalg.dataset.api.DataSet;
+import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +44,15 @@ public class MnistImagePipelineExample {
         
         ImageRecordReader recorder=new ImageRecordReader(height,width,channels,labelmaker);
         
+        recorder.initialize(train);
+        recorder.setListeners(new LogRecordListener());
         
+        DataSetIterator dataIter=new RecordReaderDataSetIterator(recorder,batchSize,1,outputNum);
+        
+        for(int i=1;i<4;i++){
+            DataSet ds=dataIter.next();
+            System.out.println(ds);
+            System.out.println(dataIter.getLabels());
+        }
     }
 }
